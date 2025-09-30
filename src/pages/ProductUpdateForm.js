@@ -3,28 +3,28 @@ import { useEffect, useState } from 'react';
 import { Button, Container, Form } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { API_BASE_URL } from "../config/config";
-// useParams 훅은 url에 들어있는 동적 파라미터의 값을 챙길 때 사용합니다.
+// useParams 훅은 url에 들어 있는 동적 파라미터의 값을 챙길때 사용합니다.
 import { useParams } from "react-router-dom";
 
 /*
 상품 수정 페이지입니다.
+
 상품 등록과 다른 점
     기본 키인 상품의 id 정보가 넘어 옵니다.
-    id를 사용하여 기존의 입력했던 상품에 대한 정보를 미리 보여 주어야 합니다. (userEffect 훅 사용)
+    id를 사용하여 기존에 입력했던 상품에 대한 정보를 미리 보여 주어야 합니다.(useEffect 훅 사용)
 
 step 01 : 
-기존 등록 폼 양식을 복사합니다.
+기존 `상품 등록` 폼 양식을 복사합니다.
 
 기존 상품 정보 읽기
-    get 방식을 사용하여 해당 상품의 정보를 읽어 옵니다. 
+    get 방식을 사용하여 해당 상품의 정보를 읽어 옵니다.
 
 테스트 시나리오
-    특정 상품에 대하여 '수정' 버튼을 클릭하면, 이전 상품 정보들이 입력란에 보여야 합니다. 
+    특정 상품에 대하여 '수정' 버튼을 클릭하면, 이전 상품 정보들이 입력란에 보여야 합니다.
 
-다음 함수들은 '상품 등록'과 동일합니다. 
-    ControlChange 함수
-    FileSelect 함수
-
+다음 함수들은 '상품 등록'과 동일합니다.
+    ControlChange 함수   
+    FileSelect 함수  
 
 ControlChange 함수
     각 컨트롤에 대한 change 이벤트 함수를 구현합니다.
@@ -35,27 +35,25 @@ FileSelect 함수
     업로드할 이미지 선택에 대한 이벤트 함수를 구현합니다.
     FileReader API를 사용하여 해당 이미지를 Base64 인코딩 문자열로 변환 작업을 합니다.
 
--- SubmitAction 함수
+SubmitAction 함수
     '등록'이라는 문구를 모두 '수정'으로 변경합니다.
-    'insert' → 'update/${id}'로 변경합니다. 
-    'axios.post' → 'axios.put'로 변경합니다. 
+    'insert' → 'update/${id}'로 변경합니다.
+    'axios.post' → 'axios.put'으로 변경합니다.
     컨트롤에 입력된 내용들을 BackEnd로 전송합니다. 
 
 파일 업로드시 유의 사항
     전송 방식은 post로 전송합니다.
     input 양식의 type="file"로 작성해야 합니다.
 
---테스트 시나리오
-    이미지 폴더에 "product_"로 시작하는 이미지가 업로드 되어야 합니다. 
-    데이터 베이스에 이전 행의 정보가 수정이 되어야 합니다.  
-    상품 목록 페이지의 수정된 정보가 보여야 합니다. 
-
-미경 사항
-    과거에 업로드했던 이전 이미지를 삭제하여야 합니다. 
+테스트 시나리오
+    이미지 폴더에 "product_"로 시작하는 새로운 이미지가 업로드 되어야 합니다.    
+    데이터 베이스에 이전 행의 정보가 수정이 되어야 합니다.
+    상품 목록 페이지에 수정된 정보가 보여야 합니다.
+    과거에 업로드했던 이전 이미지를 삭제되어야 합니다.   
 */
 
 function App() {
-    const {id} = useParams();
+    const { id } = useParams();
     console.log(`수정할 상품 번호 : ${id}`);
 
     const comment = '상품 수정';
@@ -68,27 +66,27 @@ function App() {
     const [product, setProduct] = useState(initial_value);
 
     // id를 이용하여 기존에 입력한 상품 정보 가져오기
-    useEffect(()=>{
+    useEffect(() => {
         const url = `${API_BASE_URL}/product/update/${id}`;
 
         axios
             .get(url)
-            .then((response)=>{
+            .then((response) => {
                 setProduct(response.data);
             })
-            .catch((error)=>{
+            .catch((error) => {
                 console.log(`상품 ${id}번 오류 발생 : ${error}`);
                 alert('해당 상품 정보를 읽어 오지 못했습니다.');
             });
 
-    }, [id]); // id 값이 변경될 때 마다 화면을 re-rendering 시켜야 합니다. 
+    }, [id]); // id 값이 변경될 때 마다 화면을 re-rendering 시켜야 합니다.
 
 
     // 폼 양식에서 어떠한 컨트롤의 값이 변경되었습니다.
     const ControlChange = (event) => {
         // event 객체는 change 이벤트를 발생시킨 폼 컨트롤입니다.
         const { name, value } = event.target;
-        console.log(`값이 바뀐 컨트롤 : ${name}, 값 : ${value}`);
+        //console.log(`값이 바뀐 컨트롤 : ${name}, 값 : ${value}`);
 
         // 전개 연산자를 사용하여 이전 컨트롤의 값들도 보존하도록 합니다.
         setProduct({ ...product, [name]: value });
@@ -109,7 +107,7 @@ function App() {
         // onloadend : 읽기 작업이 성공하면 자동으로 동작하는 이벤트 핸들러 함수
         reader.onloadend = () => {
             const result = reader.result;
-            console.log(result);
+            //console.log(result);
 
             // 해당 이미지는 Base64 인코딩 문자열 형식으로 state에 저장합니다.
             // 사용 예시 : data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUA...
@@ -122,14 +120,15 @@ function App() {
     const SubmitAction = async (event) => {
         event.preventDefault();
 
-        if(product.category === "-"){
-            alert('카테고리를 반드시 선택해주셔야 합니다.');
+        if (product.category === "-") {
+            alert('카테고리를 반드시 선택해 주셔야 합니다.');
             return; // 수정 중단
         }
 
         try {
-            // 라우팅 규칙 때문에 ${id}를 제거하면 안됩니다.
+            // 주의) 라우팅 규칙 때문에 ${id}를 제거하면 안됩니다.
             const url = `${API_BASE_URL}/product/update/${id}`;
+
             // 참조 공유 : 2변수가 동일한 곳을 참조합니다.
             const parameters = product;
 
@@ -143,7 +142,7 @@ function App() {
             // 이 문서는 json 형식의 파일입니다.            
             const config = { headers: { 'Content-Type': 'application/json' } };
 
-            // put() 메소드는 리소스를 "수정"하고자 할 때 사용하는 메소드입니다. 
+            // put() 메소드는 리소스를 "수정"하고자 할 때 사용하는 메소드입니다.
             const response = await axios.put(url, parameters, config);
 
             console.log(`상품 수정 : [${response.data}]`);
@@ -157,7 +156,8 @@ function App() {
 
         } catch (error) {
             console.log(error.response?.data); // 서버가 반환한 에러 메시지
-            console.log(error.response?.status); // 상태 코드
+            console.log(error.response?.status); // 상태 코드    
+
             console.log(`오류 내용 : ${error}`);
             alert('상품 수정에 실패하였습니다.');
         };

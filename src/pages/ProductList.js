@@ -114,8 +114,8 @@ function App({ user }) {
                 {/* products는 상품 배열, item는 상품 1개를 의미 */}
                 {products.map((item) => (
                     <Col key={item.id} md={4} className="mb-4">
-                        <Card className="h-100"
-                            onClick={()=> navigate(`/product/detail/${item.id}`)}
+                        <Card className="h-100" 
+                            onClick={() => navigate(`/product/detail/${item.id}`)}
                             style={{ cursor: 'pointer' }}>
                             <Card.Img
                                 variant="top"

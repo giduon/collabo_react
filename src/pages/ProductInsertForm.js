@@ -27,9 +27,9 @@ SubmitAction 함수
     input 양식의 type="file"로 작성해야 합니다.
 
 테스트 시나리오
-    이미지 폴더에 "product_"로 시작하는 이미지가 업로드 되어야 합니다. 
-    데이터 베이스에 1행이 추가되어야 합니다. 
-    상품 목록 1페이지의 1번째에 이미지가 보여야 합니다. 
+    이미지 폴더에 "product_"로 시작하는 이미지가 업로드 되어야 합니다.    
+    데이터 베이스에 1행이 추가 되어야 합니다.
+    상품 목록 1페이지의 1번째에 이미지가 보여야 합니다.
 */
 
 function App() {
@@ -46,7 +46,7 @@ function App() {
     const ControlChange = (event) => {
         // event 객체는 change 이벤트를 발생시킨 폼 컨트롤입니다.
         const { name, value } = event.target;
-        console.log(`값이 바뀐 컨트롤 : ${name}, 값 : ${value}`);
+        //console.log(`값이 바뀐 컨트롤 : ${name}, 값 : ${value}`);
 
         // 전개 연산자를 사용하여 이전 컨트롤의 값들도 보존하도록 합니다.
         setProduct({ ...product, [name]: value });
@@ -67,7 +67,7 @@ function App() {
         // onloadend : 읽기 작업이 성공하면 자동으로 동작하는 이벤트 핸들러 함수
         reader.onloadend = () => {
             const result = reader.result;
-            console.log(result);
+            //console.log(result);
 
             // 해당 이미지는 Base64 인코딩 문자열 형식으로 state에 저장합니다.
             // 사용 예시 : data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUA...
@@ -80,8 +80,8 @@ function App() {
     const SubmitAction = async (event) => {
         event.preventDefault();
 
-        if(product.category === "-"){
-            alert('카테고리를 반드시 선택해주셔야 합니다.');
+        if (product.category === "-") {
+            alert('카테고리를 반드시 선택해 주셔야 합니다.');
             return; // 등록 중단
         }
 
@@ -113,7 +113,8 @@ function App() {
 
         } catch (error) {
             console.log(error.response?.data); // 서버가 반환한 에러 메시지
-            console.log(error.response?.status); // 상태 코드
+            console.log(error.response?.status); // 상태 코드    
+
             console.log(`오류 내용 : ${error}`);
             alert('상품 등록에 실패하였습니다.');
         };
