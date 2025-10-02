@@ -31,7 +31,7 @@ function App({ user }) {
                 const parameters = { params: { memberId: user.id, role: user.role } };
                 const response = await axios.get(url, parameters);
                 setOrders(response.data);
-
+                
             } catch (error) {
                 setError('주문 목록을 불러 오는 데 실패하였습니다.');
                 console.log(error);
@@ -53,29 +53,70 @@ function App({ user }) {
 
     // 관리자를 위한 컴포넌트, 함수
     const makeAdminButton = (bean) => {
-        if (user?.role !== "ADMIN") return null;
+        if (user?.role !== "ADMIN" && user?.role !== "USER") return null;
+        // if (!["ADMIN", "USER"].includes(user?.role)) return null;
+
+        // `완료`버튼을 클릭하여 `PENING`모드를 `COMPLETED` 모드로 변경합니다. 
+        const changeStatus = async (newStatus) => {
+            try {
+                const url = `${API_BASE_URL}/order/update/status/${bean.orderId}?status=${newStatus}`;
+                await axios.put(url);
+
+                alert(`송장 번호 ${bean.orderId}의 주문 상태가 ${newStatus}으로 변경이 되었습니다.`);
+
+                // `COMPLETED` 모드로 변경되고 나면, 화면에 보이지 않습니다. 
+                // bean.orderId와 동일하지 않은 항목들만 다시 rendering 합니다. 
+                setOrders((previous) =>
+                    previous.filter((order) => orderCancel.orderId !== bean.orderId)
+                );
+                
+            } catch (error) {
+                console.log(error);
+                alert('상태 변경(주문 완료)에 실패하였습니다. ');
+            }
+        };
+
+
+        // `취소`버튼을 클릭하여 `대기 상태`인 주문 내역을 취소합니다. 
+        const orderCancel = async () => {
+             try {
+                    const url = `${API_BASE_URL}/order/delete/${bean.orderId}`;
+                    await axios.delete(url);
+
+                    alert(`송장 번호 ${bean.orderId}의 주문이 취소 되었습니다.`);
+
+                    // bean.orderId와 동일하지 않은 항목들만 다시 rendering 합니다. 
+                    setOrders((previous) =>
+                        previous.filter((order) => order.orderId !== bean.orderId)
+                    );
+                    
+                } catch (error) {
+                    console.log(error);
+                    alert('주문 취소에 실패하였습니다. ');
+                }
+        };
 
         return (
             <div>
-                <Button
-                    variant="warning"
-                    size="sm"
-                    className="me-2"
-                    onClick={() => {
-                        // navigate()에 URL을 넣으면 기본적으로 현재 SPA(root) 경로를 기준으로 상대 경로를 계산해줍니다.
-                        // 따라서, 자바 스크립트의 location 객체의 href 속성을 이용하면 해결 가능합니다.
-                        window.location.href = `${API_BASE_URL}/order/update/${bean.orderId}`;
-                    }}
-                >
-                    수정
-                </Button>
+                {/* `완료` 버튼은 관리자만 볼 수 있습니다.  */}
+                {user?.role ==='ADMIN' && (
+                    <Button
+                        variant="success"
+                        size="sm"
+                        className="me-2"
+                        onClick={() => changeStatus('COMPLETED')}
+                    >
+                        완료
+                    </Button>
+                )}
+               
                 <Button
                     variant="danger"
                     size="sm"
                     className="me-2"
-                    onClick={() => deleteOrder(bean.orderId)}
+                    onClick={() => orderCancel(bean.orderId)}
                 >
-                    삭제
+                    취소
                 </Button>
             </div>
         );
